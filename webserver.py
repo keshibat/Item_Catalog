@@ -53,7 +53,7 @@ class webServerHandler(BaseHTTPRequestHandler):
             if self.path.endswith("/delete"):
                 catalogIDPath = self.path.split("/")[2]
 
-                mycatalogQuery = session.query(Catalog).filter_by(
+                myCatalogQuery = session.query(Catalog).filter_by(
                     id=catalogIDPath).one()
                 if myCatalogQuery:
                     self.send_response(200)
