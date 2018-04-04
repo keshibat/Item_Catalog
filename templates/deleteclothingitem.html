@@ -1,9 +1,9 @@
 <html>
 
 <body>
-<h1> Are you sure you want to delete {{item.name}}? </h1>
+<h1> Are you sure you want to delete {{clothing.name}}? </h1>
 
-<form action="{{ url_for('deleteMenuItem', restaurant_id=item.restaurant_id, menu_id=item.id)}}" method = 'post'>
+<form action="{{ url_for('deleteClothingItem', catalog_id=item.catalog_id, clothing_id=item.id)}}" method = 'post'>
 
 <input type='submit', value = 'Delete'>
 
@@ -12,7 +12,7 @@
 
 </form>
 
-<a href = "{{ url_for('restaurantMenu', restaurant_id = item.restaurant_id)}}"> Cancel </a>
+<a href = "{{ url_for('catalogClothing', catalog_id = item.catalog_id)}}"> Cancel </a>
 </body>
 
 </html>

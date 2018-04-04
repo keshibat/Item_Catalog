@@ -1,12 +1,14 @@
 <html>
 <body>
-<form action= "{{url_for('editClothingItem', catalog_id = catalog_id, clothing_id=item.id)}}" method = 'POST'>
+<form action= "{{url_for('editMenuItem', restaurant_id = restaurant_id, menu_id=item.id)}}" method = 'POST'>
 
 <p>Name:</p>
 <input type = 'text' size='30' name = 'name' placeholder = '{{item.name}}'>
 
 <input type='submit' value='Edit'>
 </form>
-<a href= '{{url_for('catalogMenu', catalog_id= item.catalog_id)}}'>Cancel</a>
+
+<a href = "{{ url_for('catalogClothing', catalog_id = item.catalog_id)}}"> Cancel </a>
 </body>
+
 </html>

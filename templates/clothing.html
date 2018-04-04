@@ -4,28 +4,13 @@
 
 <h1>{{catalog.name}}</h1>
 
-<!--MESSAGE FLASHING EXAMPLE -->
-{% with messages = get_flashed_messages() %}
-{% if messages %}
-
-<ul>
-{% for message in messages %}
-  <li><strong>{{message}}</strong></li>
-  {% endfor %}
-</ul>
-{% endif %}
-{% endwith %}
 
 
-{% for i in items %}
 
-<div>
+<a href='{{url_for('editCatalog', catalog_id = catalog.id) }}'>Edit</a>
 
-<p>{{i.name}}</p>
-
-<p>{{i.description}}</p>
-
-<p> {{i.price}} </p>
+</br>
+<a href = '{{url_for('deleteCatalog', catalog_id = catalog.id) }}'>Delete</a>
 
 </div>
 
