@@ -18,8 +18,9 @@ session = DBSession()
 @app.route('/')
 @app.route('/catalog/')
 def showCatalog():
-    catalog = session.query(Catalog).order_by(asc(Catalog.name))
-    return render_template('clothing.html', catalog=catalog)
+    catalog = session.query(Catalog).all()
+    return render_template('catalog.html', catalog=catalog)
+
 
 
 # Create a new catalog
