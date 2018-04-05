@@ -58,11 +58,9 @@ def deleteCatalog(catalog_id):
         session.delete(catalogToDelete)
         flash('%s Successfully Deleted' % catalogToDelete.name)
         session.commit()
-        return redirect(url_for('showCatalogs', catalog_id=catalog_id))
+        return redirect(url_for('showCatalog', catalog_id=catalog_id))
     else:
         return render_template('deleteCatalog.html', catalog=catalogToDelete)
-
-
 
 
 
