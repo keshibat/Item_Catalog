@@ -5,9 +5,13 @@
 <h1>{{catalog.name}}</h1>
 
 
+<p>{{i.name}}</p>
 
+<div>
 
 <a href='{{url_for('editCatalog', catalog_id = catalog.id) }}'>Edit</a>
+
+
 
 </br>
 <a href = '{{url_for('deleteCatalog', catalog_id = catalog.id) }}'>Delete</a>
@@ -16,6 +20,10 @@
 
 
 {% endfor %}
+
 </body>
 
 </html>
+
+
+

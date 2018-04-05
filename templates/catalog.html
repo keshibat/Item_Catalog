@@ -1,17 +1,21 @@
-
 <html>
 
 <body>
 
-<h1>CLOTHING ITEM CATALOG</h1>
+<h1>Clothing Item Catalog</h1>
 
 
 {% for i in catalog %}
 
 <div>
 
-<p>{{i}}</p>
+<p>{{i.name}}</p>
 
+
+<a href='{{url_for('editCatalog', catalog_id = i.id ) }}'>Edit</a>
+
+</br>
+<a href = '{{url_for('deleteCatalog', catalog_id = i.id ) }}'>Delete</a>
 
 </div>
 
@@ -20,4 +24,10 @@
 </body>
 
 </html>
+
+
+
+
+
+
 

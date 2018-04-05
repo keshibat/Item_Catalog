@@ -46,7 +46,7 @@ def editCatalog(catalog_id):
             flash('Catalog Successfully Edited %s' % editedCatalog.name)
             return redirect(url_for('showCatalogs'))
     else:
-        return render_template('editCatalog.html', restaurant=editedCatalog)
+        return render_template('editCatalog.html', catalog=editedCatalog)
 
 
 # Delete a catalog
@@ -55,12 +55,15 @@ def deleteCatalog(catalog_id):
     catalogToDelete = session.query(
         Catalog).filter_by(id=catalog_id).one()
     if request.method == 'POST':
-        session.delete(restaurantToDelete)
+        session.delete(catalogToDelete)
         flash('%s Successfully Deleted' % catalogToDelete.name)
         session.commit()
         return redirect(url_for('showCatalogs', catalog_id=catalog_id))
     else:
         return render_template('deleteCatalog.html', catalog=catalogToDelete)
+
+
+
 
 
 
@@ -121,5 +124,6 @@ def deleteClothingItem(catalog_id, clothing_id):
 
 
 if __name__ == '__main__':
+    app.secret_key = 'super_secret_key'
     app.debug = True
     app.run(host='0.0.0.0', port=5000)
