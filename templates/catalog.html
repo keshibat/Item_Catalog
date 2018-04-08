@@ -13,7 +13,7 @@ Create New Catalog</a>
 
 <div>
 {% for i in catalog %}
-<a href = '{{url_for('showClothing', catalog_id = catalog.id) }}'>
+<a href = '{{url_for('showClothing', catalog_id = i.id) }}'>
 <h3>{{i.name}}</h3>
 
 
