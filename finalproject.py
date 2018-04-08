@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, jsonify, url_for, flash
 from sqlalchemy import create_engine, asc
 from sqlalchemy.orm import sessionmaker
 from database_setup import Base, Catalog, ClothingItem
@@ -30,6 +30,7 @@ def newCatalog():
         newCatalog = Catalog(name=request.form['name'])
         session.add(newCatalog)
         flash('New Catalog %s Successfully Created' % newCatalog.name)
+        session.commit()
         return redirect(url_for('showCatalog'))
     else:
         return render_template('newCatalog.html')
@@ -44,7 +45,7 @@ def editCatalog(catalog_id):
         if request.form['name']:
             editedCatalog.name = request.form['name']
             flash('Catalog Successfully Edited %s' % editedCatalog.name)
-            return redirect(url_for('showCatalogs'))
+            return redirect(url_for('showCatalog'))
     else:
         return render_template('editCatalog.html', catalog=editedCatalog)
 
@@ -63,26 +64,25 @@ def deleteCatalog(catalog_id):
         return render_template('deleteCatalog.html', catalog=catalogToDelete)
 
 
+#Show a clothing item
 
-
-@app.route('/')
 @app.route('/catalog/<int:catalog_id>/')
-def catalogMenu(catalog_id):
+@app.route('/catalog/<int:catalog_id>/clothing/')
+def showClothing(catalog_id):
     catalog = session.query(Catalog).filter_by(id=catalog_id).one()
     items = session.query(ClothingItem).filter_by(catalog_id=catalog.id)
     return render_template('clothing.html', catalog=catalog, items=items)
 
-# Task 1: Create route for newClothingItem function here
-
-
-@app.route('/catalog/<int:catalog_id>/new/', methods=['GET', 'POST'])
+# Create route for newClothingItem function here
+@app.route('/catalog/<int:catalog_id>/clothing/new/', methods=['GET', 'POST'])
 def newClothingItem(catalog_id):
+    catalog = session.query(Catalog).filter_by(id=catalog_id).one()
     if request.method == 'POST':
         newItem = CatalogItem(
             name=request.form['name'], catalog_id=catalog_id)
         session.add(newItem)
         session.commit()
-        flash("new clothing item created!")
+        flash("new Clothing %s Item Successfully Created" % (newClothing.name))
         return redirect(url_for('catalogClothing', catalog_id=catalog_id))
     else:
         return render_template('newclothingitem.html', catalog_id=catalog_id)
@@ -90,7 +90,7 @@ def newClothingItem(catalog_id):
 # Task 2: Create route for editClothingItem function here
 
 
-@app.route('/catalog/<int:catalog_id>/<int:clothing_id>/edit/', methods=['GET', 'POST'])
+@app.route('/catalog/<int:catalog_id>/clothing/<int:clothing_id>/edit/', methods=['GET', 'POST'])
 def editClothingItem(catalog_id, clothing_id):
     editedItem = session.query(ClothingItem).filter_by(id=clothing_id).one()
     if request.method == 'POST':
@@ -109,7 +109,7 @@ def editClothingItem(catalog_id, clothing_id):
 # Task 3: Create a route for deleteClothingItem function here
 
 
-@app.route('/catalog/<int:catalog_id>/<int:clothing_id>/delete/', methods=['GET', 'POST'])
+@app.route('/catalog/<int:catalog_id>/clothing/<int:clothing_id>/delete/', methods=['GET', 'POST'])
 def deleteClothingItem(catalog_id, clothing_id):
     itemToDelete = session.query(ClothingItem).filter_by(id=clothing_id).one()
     if request.method == 'POST':

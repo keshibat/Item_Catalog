@@ -8,11 +8,13 @@
 Create New Catalog</a>
 
 
-{% for i in catalog %}
+
+
 
 <div>
-
-<p>{{i.name}}</p>
+{% for i in catalog %}
+<a href = '{{url_for('showClothing', catalog_id = catalog.id) }}'>
+<h3>{{i.name}}</h3>
 
 
 <a href='{{url_for('editCatalog', catalog_id = i.id ) }}'>Edit</a>
@@ -21,6 +23,7 @@ Create New Catalog</a>
 <a href = '{{url_for('deleteCatalog', catalog_id = i.id ) }}'>Delete</a>
 
 </div>
+
 
 
 {% endfor %}
