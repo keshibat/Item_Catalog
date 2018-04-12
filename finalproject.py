@@ -78,7 +78,7 @@ def showClothing(catalog_id):
 def newClothingItem(catalog_id):
     catalog = session.query(Catalog).filter_by(id=catalog_id).one()
     if request.method == 'POST':
-        newItem = CatalogItem(
+        newItem = ClothingItem(
             name=request.form['name'], catalog_id=catalog_id)
         session.add(newItem)
         session.commit()
@@ -99,7 +99,7 @@ def editClothingItem(catalog_id, clothing_id):
         session.add(editedItem)
         session.commit()
         flash("Clothing Item has been edited")
-        return redirect(url_for('catalogClothing', catalog_id=catalog_id))
+        return redirect(url_for('showClothing', catalog_id=catalog_id))
     else:
         # USE THE RENDER_TEMPLATE FUNCTION BELOW TO SEE THE VARIABLES YOU
         # SHOULD USE IN YOUR EDITMENUITEM TEMPLATE
@@ -116,7 +116,7 @@ def deleteClothingItem(catalog_id, clothing_id):
         session.delete(itemToDelete)
         session.commit()
         flash("Catalog Item has been deleted")
-        return redirect(url_for('catalogClothing', catalog_id=catlog_id))
+        return redirect(url_for('showClothing', catalog_id=catlog_id))
     else:
         return render_template('deleteconfirmation.html', item=itemToDelete)
 
