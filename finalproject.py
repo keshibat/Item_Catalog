@@ -74,6 +74,7 @@ def showClothing(catalog_id):
     return render_template('clothing.html', catalog=catalog, items=items)
 
 # Create route for newClothingItem function here
+
 @app.route('/catalog/<int:catalog_id>/clothing/new/', methods=['GET', 'POST'])
 def newClothingItem(catalog_id):
     catalog = session.query(Catalog).filter_by(id=catalog_id).one()
@@ -82,13 +83,12 @@ def newClothingItem(catalog_id):
             name=request.form['name'], catalog_id=catalog_id)
         session.add(newItem)
         session.commit()
-        flash("new Clothing %s Item Successfully Created" % (newClothing.name))
-        return redirect(url_for('catalogClothing', catalog_id=catalog_id))
+        flash("new Clothing %s Item Successfully Created" % (newItem.name))
+        return redirect(url_for('showCatalog', catalog_id=catalog_id))
     else:
         return render_template('newclothingitem.html', catalog_id=catalog_id)
 
 # Task 2: Create route for editClothingItem function here
-
 
 @app.route('/catalog/<int:catalog_id>/clothing/<int:clothing_id>/edit/', methods=['GET', 'POST'])
 def editClothingItem(catalog_id, clothing_id):
@@ -108,7 +108,6 @@ def editClothingItem(catalog_id, clothing_id):
 
 # Task 3: Create a route for deleteClothingItem function here
 
-
 @app.route('/catalog/<int:catalog_id>/clothing/<int:clothing_id>/delete/', methods=['GET', 'POST'])
 def deleteClothingItem(catalog_id, clothing_id):
     itemToDelete = session.query(ClothingItem).filter_by(id=clothing_id).one()
@@ -116,9 +115,11 @@ def deleteClothingItem(catalog_id, clothing_id):
         session.delete(itemToDelete)
         session.commit()
         flash("Catalog Item has been deleted")
-        return redirect(url_for('showClothing', catalog_id=catlog_id))
+        return redirect(url_for('showClothing', catalog_id=catalog_id))
     else:
-        return render_template('deleteconfirmation.html', item=itemToDelete)
+        return render_template('deleteclothingitem.html', item=itemToDelete)
+
+
 
 
 if __name__ == '__main__':
