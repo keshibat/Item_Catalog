@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, jsonify, url_for, flash
+from flask import Flask, render_template, request, redirect, jsonify, url_for, flash, jsonify
 from sqlalchemy import create_engine, asc
 from sqlalchemy.orm import sessionmaker
 from database_setup import Base, Catalog, ClothingItem
@@ -11,6 +11,19 @@ Base.metadata.bind = engine
 
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
+
+# ADD JSON ENDPOINT HERE
+@app.route('/catalog/<int:catalog_id>/clothing/JSON')
+def catalogClothingJSON(catalog_id):
+    catalog = session.query(Catalog).filter_by(id = catalog_id).one()
+    items = session.query(ClothingItem).filter_by(catalog_id = catalog_id).all()
+    return jsonify(CatalogItems=[i.serialize for i in items])
+
+# ADD JSON ENDPOINT HERE
+@app.route('/catalog/<int:catalog_id>/clothing/<int:clothing_id>/JSON')
+def clothingItemJSON(catalog_id, clothing_id):
+    clothingItem = session.query(ClothingItem).filter_by(id=clothing_id).one()
+    return jsonify(clothingItem=ClothingItem.serialize)
 
 
 
