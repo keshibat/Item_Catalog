@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, jsonify, url_for, flash, jsonify
 from sqlalchemy import create_engine, asc
 from sqlalchemy.orm import sessionmaker
-from database_setup import Base, Catalog, ClothingItem
+from database_setup import Base, Catalog, ClothingItem, User
 from flask import session as login_session
 import random, string
 
@@ -102,6 +102,12 @@ def gconnect():
     login_session['picture'] = data['picture']
     login_session['email'] = data['email']
 
+
+    user_id = getUserID(login_session['email'])
+    if not user_id:
+        user_id = createUser(login_session)
+    login_session['user_id'] = user_id
+
     output = ''
     output += '<h1>Welcome, '
     output += login_session['username']
@@ -112,6 +118,29 @@ def gconnect():
     flash("you are now logged in as %s" % login_session['username'])
     print "done!"
     return output
+
+
+# User Helper Functions
+def createUser(login_session):
+    newUser = User(name=login_session['username'], email=login_session[
+                   'email'], picture=login_session['picture'])
+    session.add(newUser)
+    session.commit()
+    user = session.query(User).filter_by(email=login_session['email']).one()
+    return user.id
+
+def getUserInfo(user_id):
+    user = session.query(User).filter_by(id=user_id).one()
+    return user
+
+
+def getUserID(email):
+    try:
+        user = session.query(User).filter_by(email=email).one()
+        return user.id
+    except:
+        return None
+
 
 
 # DISCONNECT - Revoke a current user's token and reset their login_session
@@ -148,15 +177,6 @@ def gdisconnect():
 
 
 
-
-
-
-
-
-
-
-
-
 # JSON APIs to view Restaurant Information
 @app.route('/catalog/<int:catalog_id>/clothing/JSON')
 def catalogClothingJSON(catalog_id):
@@ -181,6 +201,10 @@ def catalogJSON():
 def showCatalog():
     catalog = session.query(Catalog).all()
     return render_template('catalog.html', catalog=catalog)
+    if 'username' not in login_session:
+        retrun render_template('publicCatalog.html', catalog = catalog)
+    else:
+        return render_template('catlog.html', catalog = catalog)
 
 
 
@@ -188,7 +212,7 @@ def showCatalog():
 @app.route('/catalog/new/', methods=['GET', 'POST'])
 def newCatalog():
     if request.method == 'POST':
-        newCatalog = Catalog(name=request.form['name'])
+        newCatalog = Catalog(name=request.form['name'], user_id=login_session['user_id'])
         session.add(newCatalog)
         flash('New Catalog %s Successfully Created' % newCatalog.name)
         session.commit()
@@ -232,7 +256,27 @@ def deleteCatalog(catalog_id):
 def showClothing(catalog_id):
     catalog = session.query(Catalog).filter_by(id=catalog_id).one()
     items = session.query(ClothingItem).filter_by(catalog_id=catalog.id)
-    return render_template('clothing.html', catalog=catalog, items=items)
+    creator = getUserInfo(catalog.user_id)
+    if 'username' not in login_session or creator.id != login_session['user_id']:
+        return render_template('publicclothing.html', catalog=catalog, items=items, creator=creator)
+    else
+    return render_template('clothing.html', catalog=catalog, items=items, creator=creator)
+
+
+def showFavApps(appmaker_id):
+    appmaker = session.query(AppMaker).filter_by(id=appmaker_id).one()
+    items = session.query(FavApps).filter_by(
+        appmaker_id=appmaker_id).all()
+    print "appmaker.user_id %s" % appmaker.user_id
+    creator = getUserInfo(appmaker.user_id)
+    items = session.query(FavApps).filter_by(appmaker_id=appmaker_id).all()
+    if 'username' not in login_session or creator.id != login_session['user_id']:
+        return render_template('publicfavapps.html', items=items, appmaker=appmaker, creator=creator)
+    else:
+        return render_template('favapps.html', items=items, appmaker=appmaker, creator=creator)
+
+    #return "This page will show all my FavApps."
+    #return render_template('favapps.html', items=items, appmaker=appmaker)
 
 # Create route for newClothingItem function here
 
@@ -240,8 +284,7 @@ def showClothing(catalog_id):
 def newClothingItem(catalog_id):
     catalog = session.query(Catalog).filter_by(id=catalog_id).one()
     if request.method == 'POST':
-        newItem = ClothingItem(
-            name=request.form['name'], catalog_id=catalog_id)
+        newItem = ClothingItem(name=request.form['name'], description=request.form['description'], price=request.form['price'], catalog_id=catalog_id, user_id=catalog.user_id)
         session.add(newItem)
         session.commit()
         flash("new Clothing %s Item Successfully Created" % (newItem.name))

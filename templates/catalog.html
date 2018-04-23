@@ -1,15 +1,13 @@
-<html>
+{% extends "main.html" %}
+{% block content %}
+{% include "header.html" %}
 
-<body>
+
 
 <h1>Clothing Item Catalog</h1>
 
 <a href = '{{url_for('newCatalog', catalog_id = catalog.id) }}'>
 Create New Catalog</a>
-
-
-
-
 
 <div>
 {% for i in catalog %}
@@ -27,13 +25,4 @@ Create New Catalog</a>
 
 
 {% endfor %}
-</body>
-
-</html>
-
-
-
-
-
-
-
+{% endblock %}
