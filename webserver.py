@@ -95,6 +95,7 @@ class webServerHandler(BaseHTTPRequestHandler):
                 return
         except IOError:
             self.send_error(404, 'File Not Found: %s' % self.path)
+
     # Objective 3 Step 3- Make POST method
     def do_POST(self):
         try:
