@@ -200,9 +200,8 @@ def catalogJSON():
 @app.route('/catalog/')
 def showCatalog():
     catalog = session.query(Catalog).all()
-    return render_template('catalog.html', catalog=catalog)
     if 'username' not in login_session:
-        retrun render_template('publicCatalog.html', catalog = catalog)
+        return render_template('publicCatalog.html', catalog = catalog)
     else:
         return render_template('catlog.html', catalog = catalog)
 
@@ -219,7 +218,6 @@ def newCatalog():
         return redirect(url_for('showCatalog'))
     else:
         return render_template('newCatalog.html')
-
 
 #Edit a catalog
 @app.route('/catalog/<int:catalog_id>/edit/', methods=['GET', 'POST'])
@@ -259,8 +257,8 @@ def showClothing(catalog_id):
     creator = getUserInfo(catalog.user_id)
     if 'username' not in login_session or creator.id != login_session['user_id']:
         return render_template('publicclothing.html', catalog=catalog, items=items, creator=creator)
-    else
-    return render_template('clothing.html', catalog=catalog, items=items, creator=creator)
+    else:
+        return render_template('clothing.html', catalog=catalog, items=items, creator=creator)
 
 
 def showFavApps(appmaker_id):
