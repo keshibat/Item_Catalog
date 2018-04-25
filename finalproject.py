@@ -203,7 +203,7 @@ def showCatalog():
     if 'username' not in login_session:
         return render_template('publicCatalog.html', catalog = catalog)
     else:
-        return render_template('catlog.html', catalog = catalog)
+        return render_template('catalog.html', catalog = catalog)
 
 
 
@@ -282,7 +282,7 @@ def showFavApps(appmaker_id):
 def newClothingItem(catalog_id):
     catalog = session.query(Catalog).filter_by(id=catalog_id).one()
     if request.method == 'POST':
-        newItem = ClothingItem(name=request.form['name'], description=request.form['description'], price=request.form['price'], catalog_id=catalog_id, user_id=catalog.user_id)
+        newItem = ClothingItem(name=request.form['name'], catalog_id=catalog_id, user_id=catalog.user_id)
         session.add(newItem)
         session.commit()
         flash("new Clothing %s Item Successfully Created" % (newItem.name))
