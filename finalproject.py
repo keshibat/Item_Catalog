@@ -5,7 +5,6 @@ from database_setup import Base, Catalog, ClothingItem, User
 from flask import session as login_session
 import random, string
 
-#New Import for this step
 from oauth2client.client import flow_from_clientsecrets
 from oauth2client.client import FlowExchangeError
 import httplib2
@@ -27,6 +26,7 @@ Base.metadata.bind = engine
 
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
+
 
 @app.route('/login')
 def showLogin():
@@ -124,7 +124,7 @@ def gconnect():
     return output
 
 
-"""User Helper Functions"""
+#User Helper Functions
 def createUser(login_session):
     newUser = User(name=login_session['username'], email=login_session[
                    'email'], picture=login_session['picture'])
@@ -147,11 +147,17 @@ def getUserID(email):
 
 
 
-"""DISCONNECT - Revoke a current user's token and reset their login_session."""
+#DISCONNECT
 @app.route('/gdisconnect')
 def gdisconnect():
+    """Revoke a current user's token and reset their login_session."""
     access_token = login_session.get('access_token')
     if access_token is None:
+        del login_session['access_token']
+        del login_session['gplus_id']
+        del login_session['username']
+        del login_session['email']
+        del login_session['picture']
         print 'Access Token is None'
         response = make_response(json.dumps('Current user not connected.'), 401)
         response.headers['Content-Type'] = 'application/json'
@@ -175,13 +181,18 @@ def gdisconnect():
         return response
     else:
         response = make_response(json.dumps('Failed to revoke token for given user.', 400))
+        del login_session['access_token']
+        del login_session['gplus_id']
+        del login_session['username']
+        del login_session['email']
+        del login_session['picture']
         response.headers['Content-Type'] = 'application/json'
         return response
 
 
 
 
-"""JSON APIs to view Clothing Information."""
+#JSON APIs to view Clothing Information.
 @app.route('/catalog/<int:catalog_id>/clothing/JSON')
 def catalogClothingJSON(catalog_id):
     catalog = session.query(Catalog).filter_by(id = catalog_id).one()
@@ -199,7 +210,7 @@ def catalogJSON():
     return jsonify(catalog=[r.serialize for r in catalog])
 
 
-"""Show all catalogs"""
+#Show all catalogs
 @app.route('/')
 @app.route('/catalog/')
 def showCatalog():
@@ -211,7 +222,7 @@ def showCatalog():
 
 
 
-"""Create a new catalog"""
+#Create a new catalog
 @app.route('/catalog/new/', methods=['GET', 'POST'])
 def newCatalog():
     if 'username' not in login_session:
@@ -225,7 +236,8 @@ def newCatalog():
     else:
         return render_template('newCatalog.html')
 
-"""Edit a catalog"""
+
+#Edit a catalog
 @app.route('/catalog/<int:catalog_id>/edit/', methods=['GET', 'POST'])
 def editCatalog(catalog_id):
     if 'username' not in login_session:
@@ -241,7 +253,7 @@ def editCatalog(catalog_id):
         return render_template('editCatalog.html', catalog=editedCatalog)
 
 
-"""Delete a catalog"""
+#Delete a catalog
 @app.route('/catalog/<int:catalog_id>/delete/', methods=['GET', 'POST'])
 def deleteCatalog(catalog_id):
     if 'username' not in login_session:
@@ -257,7 +269,7 @@ def deleteCatalog(catalog_id):
         return render_template('deleteCatalog.html', catalog=catalogToDelete)
 
 
-"""Show a clothing item"""
+#Show a clothing item
 @app.route('/catalog/<int:catalog_id>/')
 @app.route('/catalog/<int:catalog_id>/clothing/')
 def showClothing(catalog_id):
@@ -270,7 +282,7 @@ def showClothing(catalog_id):
         return render_template('clothing.html', catalog=catalog, items=items, creator=creator)
 
 
-"""Create route for newClothingItem function here."""
+#Create route for newClothingItem function
 @app.route('/catalog/<int:catalog_id>/clothing/new/', methods=['GET', 'POST'])
 def newClothingItem(catalog_id):
     if 'username' not in login_session:
@@ -285,7 +297,8 @@ def newClothingItem(catalog_id):
     else:
         return render_template('newclothingitem.html', catalog_id=catalog_id)
 
-"""Create route for editClothingItem function here"""
+
+#Create route for editClothingItem function
 @app.route('/catalog/<int:catalog_id>/clothing/<int:clothing_id>/edit/', methods=['GET', 'POST'])
 def editClothingItem(catalog_id, clothing_id):
     if 'username' not in login_session:
@@ -304,8 +317,9 @@ def editClothingItem(catalog_id, clothing_id):
         return render_template(
             'editclothingitem.html', catalog_id=catalog_id, clothing_id=clothing_id, item=editedItem)
 
-"""Create a route for deleteClothingItem function here"""
 
+
+#Create a route for deleteClothingItem
 @app.route('/catalog/<int:catalog_id>/clothing/<int:clothing_id>/delete/', methods=['GET', 'POST'])
 def deleteClothingItem(catalog_id, clothing_id):
     if 'username' not in login_session:
