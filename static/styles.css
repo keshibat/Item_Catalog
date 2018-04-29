@@ -4,7 +4,6 @@ header {
 
 
 body {
-   background-image: url("/static/tenderloin.png");
    background-color: #cccccc;
 }
 
@@ -13,6 +12,7 @@ h1 {
     font-family: 'Titan One', cursive;
     font-size: 50px;
     text-shadow: 4px 4px 4px #aaa;
+    color: white;
 }
 
 
@@ -22,4 +22,8 @@ button {
   top: 0;
   padding: 1em;
   width: 8em;
+}
+
+* {
+    color: white;
 }
